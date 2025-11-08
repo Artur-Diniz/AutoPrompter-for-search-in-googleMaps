@@ -1,3 +1,9 @@
+
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+
 from Db.db import SessionLocal
 from Models.Prompt import Prompt
 from Models.Subquery import Subquery
@@ -52,8 +58,15 @@ class PromptCRUD:
         subquery = session.query(Subquery).filter_by(id=id_Subquery).first()
         categoria = session.query(Categoria).filter_by(id=id_Categoria).first()
         local = session.query(Local).filter_by(id=id_Local).first()
-        query = ''
-    
+        if subquery==None  or local==None:
+            return "Erro ao buscar subquery"
+        elif  categoria==None:
+            return "Erro ao buscar categoria"
+        elif   local==None:
+            return "Erro ao buscar local"
+        else:        
+            query = ''
+
             
         if local.bairro == ""or local.bairro == None:
             query = f"{subquery.prefix} {categoria.categoria} {subquery.content} {local.cidade} {subquery.suffix}"
