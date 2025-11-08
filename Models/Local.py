@@ -1,5 +1,11 @@
+
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
 from sqlalchemy import Column, Integer, String
 from Db.db import Base
+
 
 class Local(Base):
     __tablename__ = "local"

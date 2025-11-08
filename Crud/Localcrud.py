@@ -1,16 +1,22 @@
+
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
 from Db.db import SessionLocal
 from Models.Local import Local
+
 
 class LocalCRUD:
 
     @staticmethod
-    def criar(cidade: str, bairro: str = None):
+    def criar(cidade: str, bairro: str=None):
         session = SessionLocal()
         novo = Local(cidade=cidade, bairro=bairro)
         session.add(novo)
         session.commit()
-        session.refresh(novo)      # garante que os dados estão carregados
-        session.expunge(novo)      # tira da sessão, mas mantém os atributos
+        session.refresh(novo)  # garante que os dados estão carregados
+        session.expunge(novo)  # tira da sessão, mas mantém os atributos
         session.close()
         return novo
 
@@ -28,7 +34,7 @@ class LocalCRUD:
         session = SessionLocal()
         locais = session.query(Local).all()
         for l in locais:
-            session.expunge(l)      # tira cada objeto da sessão
+            session.expunge(l)  # tira cada objeto da sessão
         session.close()
         return locais
 

@@ -1,16 +1,22 @@
+
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
 from Db.db import SessionLocal
 from Models.Subquery import Subquery
+
 
 class SubqueryCRUD:
 
     @staticmethod
-    def criar(prefix: str = None, content: str = None,suffix: str = None):
+    def criar(prefix: str=None, content: str=None, suffix: str=None):
         session = SessionLocal()
         novo = Subquery(prefix=prefix, content=content, suffix=suffix)
         session.add(novo)
         session.commit()
-        session.refresh(novo)      # garante que os dados estão carregados
-        session.expunge(novo)      # tira da sessão, mas mantém os atributos
+        session.refresh(novo)  # garante que os dados estão carregados
+        session.expunge(novo)  # tira da sessão, mas mantém os atributos
         session.close()
         return novo
 
@@ -28,12 +34,12 @@ class SubqueryCRUD:
         session = SessionLocal()
         locais = session.query(Subquery).all()
         for l in locais:
-            session.expunge(l)      # tira cada objeto da sessão
+            session.expunge(l)  # tira cada objeto da sessão
         session.close()
         return locais
 
     @staticmethod
-    def atualizar(subquery_id: int, prefix: str, content: str,suffix: str):
+    def atualizar(subquery_id: int, prefix: str, content: str, suffix: str):
         session = SessionLocal()
         subquery = session.query(Subquery).filter_by(id=subquery_id).first()
         if subquery:
@@ -41,8 +47,8 @@ class SubqueryCRUD:
             subquery.content = content
             subquery.suffix = suffix
             session.commit()
-            session.refresh(subquery)   # atualiza os dados
-            session.expunge(subquery)   # tira da sessão
+            session.refresh(subquery)  # atualiza os dados
+            session.expunge(subquery)  # tira da sessão
         session.close()
         return subquery
 
