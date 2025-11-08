@@ -13,6 +13,10 @@ def NovoPrompt(Query: str, id_Subquery: int, id_Categoria: int, id_Local: int, a
     print("Criado:", novo)
     return novo.id
 
+def autogenarte(id_Subquery: int, id_Categoria: int, id_Local: int, ):
+    novo = PromptCRUD.autogenarte(id_Subquery, id_Categoria, id_Local)
+    print("Criado:", novo)
+    return novo.id
 
 # Buscar
 def GetPromptId(Id:int):
@@ -47,4 +51,14 @@ def testPrompt():
     GetAllPrompt();
     
     
-testPrompt()
+# testPrompt()
+
+def testAutogeneratePrompt(subquery=3,Categoria=4,Local=6):    
+    Id=autogenarte(subquery,Categoria,Local)
+    GetPromptId(Id);    
+
+# autogenarte(2,1,9)
+#GetAllPrompt();
+
+
+testAutogeneratePrompt();

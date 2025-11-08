@@ -42,3 +42,5 @@ def testLocal():
     GetAllLocal();
     DeleteLocal(Id)
     GetAllLocal();
+    
+GetAllLocal();

@@ -1,12 +1,15 @@
 from Db.db import SessionLocal
 from Models.Prompt import Prompt
+from Models.Subquery import Subquery
+from Models.Local import Local
+from Models.Categoria import Categoria
 from datetime import datetime
 
 
 class PromptCRUD:
 
     @staticmethod
-    def criar(query: str, id_Subquery: int,id_Categoria: int,id_Local: int,adicionadoIn: datetime,contatosGerados:int):
+    def criar(query: str, id_Subquery: int, id_Categoria: int, id_Local: int, adicionadoIn: datetime, contatosGerados:int):
         """AI is creating summary for criar
 
         Args:
@@ -24,8 +27,47 @@ class PromptCRUD:
         novo = Prompt(query=query, id_Subquery=id_Subquery, id_Categoria=id_Categoria, id_Local=id_Local, adicionadoIn=adicionadoIn, contatosGerados=contatosGerados)
         session.add(novo)
         session.commit()
-        session.refresh(novo)      # garante que os dados estão carregados
-        session.expunge(novo)      # tira da sessão, mas mantém os atributos
+        session.refresh(novo)  # garante que os dados estão carregados
+        session.expunge(novo)  # tira da sessão, mas mantém os atributos
+        session.close()
+        return novo
+
+    @staticmethod
+    def autogenarte(id_Subquery: int, id_Categoria: int, id_Local: int,):
+        """AI is creating summary for criar
+
+        Args:
+            query (str): [description]
+            id_Subquery (int): [description]
+            id_Categoria (int): [description]
+            id_Local (int): [description]
+            adicionadoIn (datetime): [description]
+            contatosGerados (int): [description]
+
+        Returns:
+            [type]: [description]1
+        """     
+        
+        session = SessionLocal()
+        subquery = session.query(Subquery).filter_by(id=id_Subquery).first()
+        categoria = session.query(Categoria).filter_by(id=id_Categoria).first()
+        local = session.query(Local).filter_by(id=id_Local).first()
+        query = ''
+    
+            
+        if local.bairro == ""or local.bairro == None:
+            query = f"{subquery.prefix} {categoria.categoria} {subquery.content} {local.cidade} {subquery.suffix}"
+        else:
+            query = f"{subquery.prefix} {categoria.categoria} {subquery.content} {local.bairro} {subquery.suffix}"        
+            
+        query = query.replace("None ", "").replace(" None","").removeprefix(" ").replace("  ", "")
+
+            
+        novo = Prompt(query=query, id_Subquery=id_Subquery, id_Categoria=id_Categoria, id_Local=id_Local, adicionadoIn=datetime.now(), contatosGerados=0)
+        session.add(novo)
+        session.commit()
+        session.refresh(novo)  # garante que os dados estão carregados
+        session.expunge(novo)  # tira da sessão, mas mantém os atributos
         session.close()
         return novo
 
@@ -56,12 +98,12 @@ class PromptCRUD:
         session = SessionLocal()
         locais = session.query(Prompt).all()
         for l in locais:
-            session.expunge(l)      # tira cada objeto da sessão
+            session.expunge(l)  # tira cada objeto da sessão
         session.close()
         return locais
 
     @staticmethod
-    def atualizar(prompt_id:int,query: str, id_Subquery: int,id_Categoria: int,id_Local: int,adicionadoIn: datetime,contatosGerados:int):
+    def atualizar(prompt_id:int, query: str, id_Subquery: int, id_Categoria: int, id_Local: int, adicionadoIn: datetime, contatosGerados:int):
         """AI is creating summary for atualizar
 
         Args:
