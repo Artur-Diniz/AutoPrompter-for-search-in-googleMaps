@@ -40,19 +40,16 @@ class PromptCRUD:
 
     @staticmethod
     def autogenarte(id_Subquery: int, id_Categoria: int, id_Local: int,):
-        """AI is creating summary for criar
+        """AI is creating summary for autogenarte
 
         Args:
-            query (str): [query final]
-            id_Subquery (int): [id da tabela subquey]
-            id_categoria (int): [id da tabela categoria]
-            id_local (int): [id da tabela local]
-            adicionadoIn (datetime): [criado em ]
-            contatosGerados (int): [count de leads gerados]
+            id_Subquery (int): [description]
+            id_Categoria (int): [description]
+            id_Local (int): [description]
 
         Returns:
-            [type]: [description]1
-        """     
+            [Prompt]: [Prompt gerado apenas com com as 3 tabelas estrangeiras]
+        """
         
         session = SessionLocal()
         subquery = session.query(Subquery).filter_by(id=id_Subquery).first()
