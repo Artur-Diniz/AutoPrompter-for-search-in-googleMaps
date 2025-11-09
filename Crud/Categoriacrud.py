@@ -53,6 +53,26 @@ class CategoriaCRUD:
         
         return categoria
     
+    def buscar_utlima_categoria_Id():
+        """AI is creating summary for listar_todos
+
+        Returns:
+            [local]: [ultimo gerado]
+        """
+        session = SessionLocal()
+        categoria = (session.query(Categoria)
+                        .order_by(Categoria.id.desc())
+                        .first())
+        
+        if categoria:
+            session.expunge(categoria)   # tira cada objeto da sessão
+        session.close()
+        
+        if categoria==None:    
+            return False
+        
+        return categoria
+    
     
     @staticmethod
     def listar_todos():

@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import random
+from datetime import datetime
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -11,48 +12,79 @@ from Crud.Categoriacrud import CategoriaCRUD
 
 def Main():
     lastPrompt = PromptCRUD.buscar_ultimo()
-
-    categoria = 1
+    categoria = 1 
     local = 1
+
     subqueries = random.sample(range(1, 14), 4)
 
+    ultima_categoria = CategoriaCRUD.buscar_utlima_categoria_Id()
+    categoria_prioridade_5 = CategoriaCRUD.buscar_primeiro_categoria_com_prioridade_5()
 
     if lastPrompt:
         categoria = lastPrompt.id_Categoria
-        local = lastPrompt.id_Local  
+        local = lastPrompt.id_Local
 
-        proxima_categoria = CategoriaCRUD.buscar_por_id(categoria + 1)
+        # 🧩 Caso chegue na última categoria do banco
+        if ultima_categoria and categoria == ultima_categoria.id:
+            proximo_local = LocalCRUD.buscar_por_id(local + 1)
 
-        if proxima_categoria:
-            #  Caso ainda esteja nas categorias de prioridade até 4 → continua no mesmo local
-            if proxima_categoria.prioridade <= 4:
-                categoria = proxima_categoria.id
+            if proximo_local:
+                local = proximo_local.id
             else:
-                # Caso a prioridade seja >=5 → muda de local e reseta categoria para 1
-                local += 1
+                # 🔴 Nenhum próximo local — significa que terminou tudo
+                raise RuntimeError(
+                    f"🚨 Fim de execução: atingido último local ({local}) e última categoria ({categoria})."
+                )
+
+            if categoria_prioridade_5:
+                categoria = categoria_prioridade_5.id
+            else:
                 categoria = 1
+
         else:
-            # Se acabou as categorias → vai para próximo local
-            local += 1
-            categoria = 1
+            # fluxo normal
+            proxima_categoria = CategoriaCRUD.buscar_por_id(categoria + 1)
 
-        #  Caso não existam mais locais → reinicia locais e muda para categorias de prioridade >=5
-        proximo_local = LocalCRUD.buscar_por_id(local)
-        if not proximo_local:
-                    # Se acabou os locais → reinicia locais e começa nas categorias de prioridade >=5
-                    local = 1
-                    categoria_prioridade_5 = CategoriaCRUD.buscar_primeiro_categoria_com_prioridade_5()
+            if proxima_categoria:
+                if proxima_categoria.prioridade <= 4:
+                    categoria = proxima_categoria.id
+                else:
+                    # próxima categoria é prioridade >=5 → muda local
+                    proximo_local = LocalCRUD.buscar_por_id(local + 1)
+                    if proximo_local:
+                        local = proximo_local.id
+                    else:
+                        # 🔴 acabou locais, erro controlado
+                        raise RuntimeError(
+                            f"🚨 Fim de execução: atingido último local ({local}) sem próximo disponível."
+                        )
 
-                    if categoria_prioridade_5:
-                        categoria = categoria_prioridade_5.id
-               
-
+                    categoria = 1
+            else:
+                # acabou categorias → tenta avançar local
+                proximo_local = LocalCRUD.buscar_por_id(local + 1)
+                if proximo_local:
+                    local = proximo_local.id
+                    categoria = 1
+                else:
+                    # 🔴 Sem categorias nem locais → encerra
+                    raise RuntimeError(
+                        f"🚨 Fim de execução: atingido último local ({local}) e última categoria ({categoria})."
+                    )
 
     for subquery in subqueries:
         novo = PromptCRUD.autogenarte(subquery, categoria, local)
-        print(novo)
+        print(
+            f"[{datetime.now()}] Gerado: {novo.query} (cat={categoria}, local={local}, sub={subquery})"
+        )
 
     return True
 
 
-Main()
+if __name__ == "__main__":
+    try:
+        Main()
+    except RuntimeError as e:
+        print(str(e))
+        print("⛔ Encerrando execução por limite máximo atingido.")
+        sys.exit(1)

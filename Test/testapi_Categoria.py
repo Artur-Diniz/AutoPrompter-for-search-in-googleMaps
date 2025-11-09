@@ -19,9 +19,14 @@ def NovoCategoria(categoria:str, prioridade:int):
 def GetCategoriaId(Id:int):
     buscado = CategoriaCRUD.buscar_por_id(Id)
     print("Buscado:", buscado)
-
+    
+#busca primeira caregoria com prioridade 5 do menor id para o maior
 def get_primeiro_categoria_com_prioridade_5():
     buscado = CategoriaCRUD.buscar_primeiro_categoria_com_prioridade_5()
+    print("Buscado:", buscado)
+    
+def get_utlima_categoria_Id():
+    buscado = CategoriaCRUD.buscar_utlima_categoria_Id()
     print("Buscado:", buscado)
 # Atualizar
 def UpdateCategoria(Id:int, categoria:str, prioridade:int):
@@ -49,3 +54,5 @@ def testCategoria():
     GetAllCategoria();
 
 # get_primeiro_categoria_com_prioridade_5()
+
+# get_utlima_categoria_Id()
