@@ -133,6 +133,11 @@ class PromptCRUD:
         
     @staticmethod
     def buscar_query_novo_mais_antiga():
+        """AI is creating summary for buscar_query_novo_mais_antiga
+
+        Returns:
+            [type]: [description]
+        """
         session = SessionLocal()
         prompt_disponivel = (
                 session.query(Prompt)
@@ -155,11 +160,29 @@ class PromptCRUD:
             [type]: [description]
         """
         session = SessionLocal()
-        locais = session.query(Prompt).all()
-        for l in locais:
+        prompt = session.query(Prompt).all()
+        for l in prompt:
             session.expunge(l)  # tira cada objeto da sessão
         session.close()
-        return locais
+        return prompt
+    
+    @staticmethod
+    def buscar_ultimo():
+        """AI is creating summary for listar_todos
+
+        Returns:
+            [local]: [ultimo gerado]
+        """
+        session = SessionLocal()
+        prompt = session.query(Prompt).order_by(Prompt.adicionadoIn.desc()).first()
+        if prompt:
+            session.expunge(prompt)   # tira cada objeto da sessão
+        session.close()
+        
+        if prompt==None:    
+            return False
+        
+        return prompt
 
     @staticmethod
     def atualizar(prompt_id:int, query: str, id_Subquery: int, id_Categoria: int, id_Local: int, adicionadoIn: datetime,datauso:datetime, contatosGerados:int, usado:bool):

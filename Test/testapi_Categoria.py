@@ -20,7 +20,9 @@ def GetCategoriaId(Id:int):
     buscado = CategoriaCRUD.buscar_por_id(Id)
     print("Buscado:", buscado)
 
-
+def get_primeiro_categoria_com_prioridade_5():
+    buscado = CategoriaCRUD.buscar_primeiro_categoria_com_prioridade_5()
+    print("Buscado:", buscado)
 # Atualizar
 def UpdateCategoria(Id:int, categoria:str, prioridade:int):
     atualizado = CategoriaCRUD.atualizar(Id, categoria, prioridade)
@@ -45,3 +47,5 @@ def testCategoria():
     GetAllCategoria();
     DeleteCategoria(Id)
     GetAllCategoria();
+
+# get_primeiro_categoria_com_prioridade_5()

@@ -24,7 +24,7 @@ def GetPromptId(Id:int):
     print("Buscado:", buscado)
     
     
-def Get_prompt_novo():
+def Get_query_novo_mais_antiga():
     buscado = PromptCRUD.buscar_query_novo_mais_antiga()
     if buscado == False:
         print("Sem Propmts Disponiveis")
@@ -37,8 +37,7 @@ def GetDuplicate(id_Subquery: int,id_categoria:int,id_local:int):
     if PromptCRUD.buscar_por_Idquery_Idcategoria_IdLocal(id_Subquery,id_categoria,id_local):
          print("foi true")
     else:
-         print("foi else")
-        
+         print("foi else")        
 
 
 # Atualizar
@@ -52,6 +51,9 @@ def UpdateUso(id:int,contatosGerados:int):
 # Listar todos
 def GetAllPrompt():
     print("Todos:", PromptCRUD.listar_todos())
+    
+def GetUltimo():
+    print("Ultimo:", PromptCRUD.buscar_ultimo())
 
 
 # Deletar
@@ -72,13 +74,14 @@ def testPrompt():
     
 # testPrompt()
 
-def testAutogeneratePrompt(subquery=1,Categoria=1,Local=1):    
-    Id=autogenarte(subquery,Categoria,Local)
-    GetPromptId(Id);    
+def testAutogeneratePrompt(subquery=5,Categoria=2,Local=1):    
+    autogenarte(subquery,Categoria,Local)
 
-
+# GetUltimo()
 # testAutogeneratePrompt();
+# GetUltimo()
 
-newprompt=Get_prompt_novo()
-UpdateUso(newprompt.id,1)
-GetAllPrompt();
+
+# newprompt=Get_prompt_novo()
+# UpdateUso(newprompt.id,1)
+# GetAllPrompt();

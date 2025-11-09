@@ -27,8 +27,16 @@ class LocalCRUD:
         if local:
             session.expunge(local)  # tira da sessão
         session.close()
+        
+        if local==None:    
+            return False        
+        
+        
         return local
+    @staticmethod
 
+    
+    
     @staticmethod
     def listar_todos():
         session = SessionLocal()
@@ -37,6 +45,8 @@ class LocalCRUD:
             session.expunge(l)  # tira cada objeto da sessão
         session.close()
         return locais
+    
+
 
     @staticmethod
     def atualizar(local_id: int, cidade: str, bairro: str):

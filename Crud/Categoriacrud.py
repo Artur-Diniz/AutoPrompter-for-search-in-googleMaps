@@ -25,9 +25,35 @@ class CategoriaCRUD:
         categoria = session.query(Categoria).filter_by(id=Categoria_id).first()
         if categoria:
             session.expunge(categoria)  # tira da sessão
-        session.close()
+        session.close()  
+          
+        if categoria==None:    
+            return False
+        
         return categoria
+    
+    def buscar_primeiro_categoria_com_prioridade_5():
+        """AI is creating summary for listar_todos
 
+        Returns:
+            [local]: [ultimo gerado]
+        """
+        session = SessionLocal()
+        categoria = (session.query(Categoria)
+                        .filter(Categoria.prioridade == 5)
+                        .order_by(Categoria.id.asc())
+                        .first())
+        
+        if categoria:
+            session.expunge(categoria)   # tira cada objeto da sessão
+        session.close()
+        
+        if categoria==None:    
+            return False
+        
+        return categoria
+    
+    
     @staticmethod
     def listar_todos():
         session = SessionLocal()
