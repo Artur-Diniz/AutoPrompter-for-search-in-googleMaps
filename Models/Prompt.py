@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
-from sqlalchemy import Column, Integer, String,DateTime
+from sqlalchemy import Column, Integer, String,DateTime,Boolean
 from Db.db import Base
 
 
@@ -18,10 +18,12 @@ class Prompt(Base):
     id_Local = Column(Integer, nullable=False)
     adicionadoIn = Column(DateTime, nullable=False)
     contatosGerados = Column(Integer)
+    usado = Column(Boolean, default=False)  # indica se o prompt já foi utilizado
+    dataUso = Column(DateTime, nullable=True) 
 
     def __repr__(self):
-        return f"<Prompt id={self.id}, query='{self.query}', id_Subquery='{self.id_Subquery}', id_Categoria='{self.id_Categoria}', id_Local='{self.id_Local}', adicionadoIn='{self.adicionadoIn}', contatosGerados='{self.contatosGerados}'>"
+        return f"<Prompt id={self.id}, query='{self.query}', id_Subquery='{self.id_Subquery}', id_Categoria='{self.id_Categoria}', id_Local='{self.id_Local}', adicionadoIn='{self.adicionadoIn}', contatosGerados='{self.contatosGerados}', usado='{self.usado}, dataUso='{self.dataUso}>"
         
     def __str__(self):
-        return f"<Prompt id={self.id}, query='{self.query}', id_Subquery='{self.id_Subquery}', id_Categoria='{self.id_Categoria}', id_Local='{self.id_Local}', adicionadoIn='{self.adicionadoIn}', contatosGerados='{self.contatosGerados}'>"
+        return f"<Prompt id={self.id}, query='{self.query}', id_Subquery='{self.id_Subquery}', id_Categoria='{self.id_Categoria}', id_Local='{self.id_Local}', adicionadoIn='{self.adicionadoIn}', contatosGerados='{self.contatosGerados}', usado='{self.usado}, dataUso='{self.dataUso}>"
         

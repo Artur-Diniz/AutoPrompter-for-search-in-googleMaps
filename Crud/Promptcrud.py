@@ -19,18 +19,18 @@ class PromptCRUD:
         """AI is creating summary for criar
 
         Args:
-            query (str): [description]
-            id_Subquery (int): [description]
-            id_Categoria (int): [description]
-            id_Local (int): [description]
+            query (str): [query final para o google maps]
+            id_Subquery (int): [id da tabela subquey]
+            id_categoria (int): [id da tabela categoria]
+            id_local (int): [id da tabela local]
             adicionadoIn (datetime): [description]
             contatosGerados (int): [description]
 
         Returns:
-            [type]: [description]1
+            [type]: [description]
         """
         session = SessionLocal()
-        novo = Prompt(query=query, id_Subquery=id_Subquery, id_Categoria=id_Categoria, id_Local=id_Local, adicionadoIn=adicionadoIn, contatosGerados=contatosGerados)
+        novo = Prompt(query=query, id_Subquery=id_Subquery, id_Categoria=id_Categoria, id_Local=id_Local, adicionadoIn=adicionadoIn, contatosGerados=contatosGerados,)
         session.add(novo)
         session.commit()
         session.refresh(novo)  # garante que os dados estão carregados
@@ -43,12 +43,12 @@ class PromptCRUD:
         """AI is creating summary for criar
 
         Args:
-            query (str): [description]
-            id_Subquery (int): [description]
-            id_Categoria (int): [description]
-            id_Local (int): [description]
-            adicionadoIn (datetime): [description]
-            contatosGerados (int): [description]
+            query (str): [query final]
+            id_Subquery (int): [id da tabela subquey]
+            id_categoria (int): [id da tabela categoria]
+            id_local (int): [id da tabela local]
+            adicionadoIn (datetime): [criado em ]
+            contatosGerados (int): [count de leads gerados]
 
         Returns:
             [type]: [description]1
@@ -100,6 +100,52 @@ class PromptCRUD:
             session.expunge(prompt)  # tira da sessão
         session.close()
         return prompt
+    
+    @staticmethod
+    def busca_por_duplicatas(id_Subquery: int,id_categoria:int,id_local:int):
+        """AI is creating summary for busca_por_duplicatas
+
+        Args:
+            id_Subquery (int): [id da tabela subquey]
+            id_categoria (int): [id da tabela categoria]
+            id_local (int): [id da tabela local]
+
+        Returns:
+            [type]: [Bool]
+        """
+        
+        
+        session = SessionLocal()
+        prompt = session.query(Prompt).filter(
+                Prompt.id_Subquery == id_Subquery,
+                Prompt.id_Categoria == id_categoria,
+                Prompt.id_Local == id_local
+            ).all()
+        if prompt:
+            session.expunge(prompt)  # tira da sessão
+        session.close()
+        
+        if prompt == []:
+            return True
+        else:
+            return False
+        
+        
+    @staticmethod
+    def buscar_query_novo_mais_antiga():
+        session = SessionLocal()
+        prompt_disponivel = (
+                session.query(Prompt)
+                .filter(Prompt.usado == False)
+                .order_by(Prompt.adicionadoIn.asc())
+                .first())
+        session.close()
+        
+        if prompt_disponivel==None:
+            return False
+        else:
+            return prompt_disponivel
+
 
     @staticmethod
     def listar_todos():
@@ -116,7 +162,7 @@ class PromptCRUD:
         return locais
 
     @staticmethod
-    def atualizar(prompt_id:int, query: str, id_Subquery: int, id_Categoria: int, id_Local: int, adicionadoIn: datetime, contatosGerados:int):
+    def atualizar(prompt_id:int, query: str, id_Subquery: int, id_Categoria: int, id_Local: int, adicionadoIn: datetime,datauso:datetime, contatosGerados:int, usado:bool):
         """AI is creating summary for atualizar
 
         Args:
@@ -142,6 +188,8 @@ class PromptCRUD:
             prompt.id_Categoria = id_Categoria
             prompt.id_Local = id_Local
             prompt.adicionadoIn = adicionadoIn
+            prompt.dataUso = datauso
+            prompt.usado = usado
             prompt.contatosGerados = contatosGerados
             prompt.id_Subquery = id_Subquery
             session.commit()
@@ -149,6 +197,38 @@ class PromptCRUD:
             # garante que os dados estão carregados antes de fechar
             session.refresh(prompt)
             session.expunge(prompt)
+            return prompt
+        finally:
+            session.close()
+    
+    
+    @staticmethod
+    def atualizar_Usado(prompt_id:int,contatosGerados:int):
+        """AI is creating summary for Update_Usado
+
+        Args:
+            prompt_id (int): [description]
+
+        Returns:
+            [type]: [description]
+        """
+        session = SessionLocal()
+        try:
+            prompt = session.query(Prompt).filter_by(id=prompt_id).first()
+            if not prompt:
+                return None  # não encontrou o registro
+
+
+            prompt.dataUso = datetime.now()
+            prompt.usado = True
+            prompt.contatosGerados = contatosGerados
+     
+            session.commit()
+
+            # garante que os dados estão carregados antes de fechar
+            session.refresh(prompt)
+            session.expunge(prompt)
+            
             return prompt
         finally:
             session.close()
